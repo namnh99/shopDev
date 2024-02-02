@@ -9,7 +9,7 @@ require('./dbs/index')
 
 const logStream = {
   write: (text) => {
-    debugger;
+    // debugger;
     logger.info(text)
   }
 }
