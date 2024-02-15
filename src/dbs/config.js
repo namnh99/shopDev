@@ -1,4 +1,5 @@
 const mongoose = require('mongoose')
+const logger = require('../configs/logging')(module.filename)
 
 const endpointDb = 'mongodb://localhost:27017'
 
@@ -10,8 +11,8 @@ const config = {
     }
 
     mongoose.connect(endpointDb)
-      .then(() => console.log('Connect Mongodb success'))
-      .catch(err => console.log(err))
+      .then(() => logger.info('Connect Mongodb success'))
+      .catch(err => logger.error(err))
   }
 }
 

@@ -1,11 +1,21 @@
 const winston = require('winston')
+require('winston-daily-rotate-file')
 const path = require('path')
 const fs = require('fs')
-const cls = require('cls-hooked')
+const { combine, timestamp, json, colorize, label, errors, printf } = winston.format
 
-const allFilter = winston.format((info) => info)
+const allFilter = winston.format(info => info)
 
-const errorFormat = winston.format((info, opts) => {
+const infoFilter = winston.format(info => info.level === 'info' ? info : false)
+
+const errorFilter = winston.format(info => info.level === 'error' ? info : false)
+
+const actionFilter = winston.format(info => {
+  if (!info.message || typeof info.message !== 'string') return false
+  return info.message.includes('[Action logs]') ? info : false
+})
+
+const errorFormat = winston.format((info) => {
   if (info.level === 'error' && info.stack) {
     info.message = `${info.message}\n${info.stack}`
     delete info.stack
@@ -16,16 +26,16 @@ const errorFormat = winston.format((info, opts) => {
 const createCustomFormat = (module, filter) => {
   const filename = module.replace(/^.*[\\/]/, '')
 
-  return winston.format.combine(
+  return combine(
     filter(),
-    winston.format.timestamp({
+    timestamp({
       format: 'YYYY-MM-DD HH:mm:ss'
     }),
-    winston.format.json(),
+    json(),
     errorFormat(),
-    winston.format.colorize(),
-    winston.format.label({ label: filename }),
-    winston.format.errors({
+    colorize(),
+    label({ label: filename }),
+    errors({
       stack: true,
       separator: '\n',
       showStack: true,
@@ -38,15 +48,24 @@ const createCustomFormat = (module, filter) => {
       date: true,
       trace: true
     }),
-    winston.format.printf(({ level, message, label, timestamp }) => {
-      debugger;
-      const clsNamespace = cls.getNamespace('app')
-      if (!clsNamespace) {
-        return `${timestamp} - ${level.toUpperCase()} - [${label}]: >> ${message}`
-      }
-      return `${clsNamespace.get('requestId') ? '[Request ID - ' + clsNamespace.get('requestId') + '] - ' : ''}${timestamp} - ${level.toUpperCase()} - [${label}]: >> ${message}`
+    printf(({ level, message, label, timestamp }) => {
+      return `${timestamp} - ${level.toUpperCase()} - [${label}]: >> ${message}`
     })
   )
+}
+
+const createTransportItem = (fileName, module, filter) => {
+  return new winston.transports.DailyRotateFile({
+    filename: fileName,
+    handleExceptions: true,
+    zippedArchive: true,
+    format: createCustomFormat(module, filter),
+    maxSize: '1k',
+    maxFiles: '2',
+    options: {
+      mode: 0o766
+    }
+  })
 }
 
 const logger = (module) => {
@@ -58,32 +77,40 @@ const logger = (module) => {
   const errorFileName = path.join(filePath, process.env.LOGGING_FILE_ERROR)
   const actionFileName = path.join(filePath, process.env.LOGGING_FILE_ACTION)
 
+  const transports1 = createTransportItem(fileName, module, allFilter)
+  const transports2 = createTransportItem(infoFileName, module, infoFilter)
+  const transports3 = createTransportItem(errorFileName, module, errorFilter)
+  const transports4 = createTransportItem(actionFileName, module, actionFilter)
+
+  transports1.on('rotate', (oldFilename, newFilename) => {
+    // do something fun
+    console.log(oldFilename)
+    // fs.unlinkSync(oldFilename)
+  });
+
+  transports2.on('rotate', (oldFilename, newFilename) => {
+    // do something fun
+    console.log(oldFilename)
+    // fs.unlinkSync(oldFilename)
+  });
+  
   const myLogger = winston.createLogger({
     transports: [
-      new winston.transports.File({
-        filename: fileName,
-        handleExceptions: true,
-        format: createCustomFormat(module, allFilter)
-      }),
-      new winston.transports.File({
-        filename: infoFileName,
-        handleExceptions: true,
-        format: createCustomFormat(module, allFilter)
-      }),
-      new winston.transports.File({
-        filename: errorFileName,
-        handleExceptions: true,
-        format: createCustomFormat(module, allFilter)
-      }),
-      new winston.transports.File({
-        filename: actionFileName,
-        handleExceptions: true,
-        format: createCustomFormat(module, allFilter)
-      }),
+      transports1,
+      transports2,
+      transports3,
+      transports4,
     ]
   })
 
-  myLogger.logAction = (actionLog) => {
+  // add log console if running dev/test env
+  if (process.env.APP_ENV !== 'production') {
+    myLogger.add(new winston.transports.Console({
+      format: createCustomFormat(module, allFilter)
+    }))
+  }
+
+  myLogger.action = (actionLog) => {
     myLogger.info('[Action logs]: ' + JSON.stringify(actionLog))
   }
 

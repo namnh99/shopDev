@@ -8,24 +8,22 @@ const logger = require('./configs/logging')(module.filename)
 require('./dbs/index')
 
 const logStream = {
-  write: (text) => {
-    // debugger;
-    logger.info(text)
+  write: (message) => {
+    logger.info(message)
   }
 }
 
 // init middleware
-app.use(morgan('dev', {   // log request
-  // stream: logStream,
+app.use(morgan(':method :url :status :res[content-length] - :response-time ms', {   // log request
+  stream: logStream,
+  immediate: false
 }))
 app.use(compression())
 app.use(helmet())   // protect api, info server
 
 // init routers
 app.use('/health', (req, res) => {
-  res.status(200).send({
-    message: 'OK' 
-  })
+  res.status(200).send({ message: 'OK' })
 })
 
 module.exports = app
