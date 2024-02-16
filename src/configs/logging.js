@@ -56,15 +56,14 @@ const createCustomFormat = (module, filter) => {
 
 const createTransportItem = (fileName, module, filter) => {
   return new winston.transports.DailyRotateFile({
-    filename: fileName,
+    filename: `${fileName}.%DATE%`,
     handleExceptions: true,
     zippedArchive: true,
+    datePattern: 'YYYY-MM-DD',
     format: createCustomFormat(module, filter),
+    auditFile: `${fileName}-audit.json`,
     maxSize: '1k',
     maxFiles: '2',
-    options: {
-      mode: 0o766
-    }
   })
 }
 
@@ -77,29 +76,22 @@ const logger = (module) => {
   const errorFileName = path.join(filePath, process.env.LOGGING_FILE_ERROR)
   const actionFileName = path.join(filePath, process.env.LOGGING_FILE_ACTION)
 
-  const transports1 = createTransportItem(fileName, module, allFilter)
-  const transports2 = createTransportItem(infoFileName, module, infoFilter)
-  const transports3 = createTransportItem(errorFileName, module, errorFilter)
-  const transports4 = createTransportItem(actionFileName, module, actionFilter)
+  const transportsAll = createTransportItem(fileName, module, allFilter)
+  const transportsInfo = createTransportItem(infoFileName, module, infoFilter)
+  const transportsError = createTransportItem(errorFileName, module, errorFilter)
+  const transportsAction = createTransportItem(actionFileName, module, actionFilter)
 
-  transports1.on('rotate', (oldFilename, newFilename) => {
-    // do something fun
-    console.log(oldFilename)
-    // fs.unlinkSync(oldFilename)
-  });
+  // transportsAll.on('rotate', (oldFile, newFile) => {
+  //   // do something fun
+  //   console.log(oldFile)
+  // });
 
-  transports2.on('rotate', (oldFilename, newFilename) => {
-    // do something fun
-    console.log(oldFilename)
-    // fs.unlinkSync(oldFilename)
-  });
-  
   const myLogger = winston.createLogger({
     transports: [
-      transports1,
-      transports2,
-      transports3,
-      transports4,
+      transportsAll,
+      transportsInfo,
+      transportsError,
+      transportsAction,
     ]
   })
 
