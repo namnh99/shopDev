@@ -49,7 +49,7 @@ const createCustomFormat = (module, filter) => {
       trace: true
     }),
     printf(({ level, message, label, timestamp }) => {
-      return `${timestamp} - ${level.toUpperCase()} - [${label}]: >> ${message}`
+      return `${timestamp} - [${label}]: >> ${message}`
     })
   )
 }
@@ -61,9 +61,9 @@ const createTransportItem = (fileName, module, filter) => {
     zippedArchive: true,
     datePattern: 'YYYY-MM-DD',
     format: createCustomFormat(module, filter),
-    auditFile: `${fileName}-audit.json`,
-    maxSize: '1k',
-    maxFiles: '2',
+    // auditFile: `${fileName}-audit.json`,
+    maxSize: '20m',
+    maxFiles: '1d',
   })
 }
 

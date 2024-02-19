@@ -1,23 +1,25 @@
-const config = require('./config')
+const config = require('./config.db')
 
 class Database {
   instance;
 
-  constructor(type = 'mongodb') {
+  constructor(type) {
     this.connect(type)
   }
 
   connect(type) {
-    config[type]()
+    config[type].connect()
   }
 
-  static getIntance() {
+  static getIntance(type) {
     if (!this.instance) {
-      this.instance = new Database()
+      this.instance = new Database(type)
     }
 
     return this.instance
   }
 }
 
-module.exports = Database.getIntance()
+const instanceMongoDb = Database.getIntance(process.env.DATABASE_MANAGEMENT)
+
+module.exports = instanceMongoDb
