@@ -13,7 +13,7 @@ const signalHandler = () => {
 
   // close db connection
   config[process.env.DATABASE_MANAGEMENT].close()
-    .then(() => logger.info('Close database'))
+    .then(() => logger.info('Close database.'))
     .catch(err => logger.error(err))
     .finally(() => process.exit())
 

@@ -81,8 +81,8 @@ const logger = (module) => {
   const transportsError = createTransportItem(errorFileName, module, errorFilter)
   const transportsAction = createTransportItem(actionFileName, module, actionFilter)
 
+  // // handle when rotate file log
   // transportsAll.on('rotate', (oldFile, newFile) => {
-  //   // do something fun
   //   console.log(oldFile)
   // });
 
