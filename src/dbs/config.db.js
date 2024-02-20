@@ -2,7 +2,10 @@ const mongoose = require('mongoose')
 const logger = require('../configs/logging')(module.filename)
 const { countConnect } = require('../helper/check.connect')
 
-const endpointDb = 'mongodb://localhost:27017'
+const { POOL_SIZE } = require('../common/constant')
+const { db: { host, port, name } } = require('../configs/global')
+
+const MONGODB_ENDPOINT = `mongodb://${host}:${port}/${name}`
 
 const config = {
   mongodb: {
@@ -12,12 +15,12 @@ const config = {
         mongoose.set('debug', { color: true })
       }
 
-      mongoose.connect(endpointDb)
+      mongoose.connect(MONGODB_ENDPOINT, { maxPoolSize: POOL_SIZE })
         .then(() => {
           const count = countConnect()
           logger.info(`Connect Mongodb success, ${count} connections`)
         })
-        .catch(err => logger.error(err))
+        .catch(err => logger.error(`Lỗi kết nối tới mongodb: ${err}`))
     },
     close: () => mongoose.connection.close()
   }
