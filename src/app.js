@@ -8,6 +8,9 @@ const bodyParser  = require('body-parser')
 // middlewares
 const { endpointNotFound, errorHandle } = require('./middlewares/errorHandle')
 
+// routers
+const userRoute = require('./routers/user.route')
+
 // logger
 const logger = require('./configs/logging')(module.filename)
 
@@ -35,6 +38,8 @@ require('./dbs/index')
 app.use('/health', (req, res) => {
   res.status(200).send({ message: 'OK' })
 })
+
+app.use('/user', userRoute)
 
 // Error handle middleware
 app.use('*', endpointNotFound)

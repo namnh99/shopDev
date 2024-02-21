@@ -7,7 +7,8 @@ const getStatics = async () => {
 }
 
 const getMethods = async () => {
-  return User.getMethods()
+  const user = new User({ userId: '1', phone: 123 })
+  return user.getMethods()
 }
 
 module.exports = {
