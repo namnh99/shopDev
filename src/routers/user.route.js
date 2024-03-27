@@ -11,6 +11,6 @@ router.get('/', (req, res) => {
 })
 router.get('/getMethods', getMethods)
 router.get('/getStatics', getStatics)
-router.post('/createUser', createUser)
+// router.post('/createUser', createUser)
 
 module.exports = router

@@ -10,6 +10,7 @@ const { endpointNotFound, errorHandle } = require('./middlewares/errorHandle')
 
 // routers
 const userRoute = require('./routers/user.route')
+const shopRoute = require('./routers')
 
 // logger
 const logger = require('./configs/logging')(module.filename)
@@ -39,7 +40,8 @@ app.use('/health', (req, res) => {
   res.status(200).send({ message: 'OK' })
 })
 
-app.use('/user', userRoute)
+// app.use('/user', userRoute)
+app.use('/', shopRoute)
 
 // Error handle middleware
 app.use('*', endpointNotFound)
