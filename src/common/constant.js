@@ -6,9 +6,18 @@ const RESPONSE = {
   ERR_JWT_DECODE: 'Incorect token',
 }
 
+
+const ROLE_SHOP = {
+  SHOP: 'SHOP',
+  WRITER: 'WRITER',
+  EDITER: 'EDITER',
+  ADMIN: 'ADMIN'
+}
+
 const POOL_SIZE = 50
 
 module.exports = {
   RESPONSE,
-  POOL_SIZE
+  POOL_SIZE,
+  ROLE_SHOP
 }
