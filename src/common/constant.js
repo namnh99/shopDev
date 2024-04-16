@@ -6,7 +6,6 @@ const RESPONSE = {
   ERR_JWT_DECODE: 'Incorect token',
 }
 
-
 const ROLE_SHOP = {
   SHOP: 'SHOP',
   WRITER: 'WRITER',

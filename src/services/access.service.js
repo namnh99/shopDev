@@ -1,17 +1,17 @@
-const shopModel = require('../../models/shop.model')
+const shopModel = require('../models/shop.model')
 const bcrypt = require('bcrypt')
 const crypto = require('crypto')
-const { ROLE_SHOP } = require('../../common/constant')
+const { ROLE_SHOP } = require('../common/constant')
 
 class AccessService {
   static signUp = async ({ name, email, password }) => {
     try {
       // step 1: check email exist
-      const hodelShop = await shopModel.findOne({ email }).lean()
-      if (shopModel) {
+      const holderShop = await shopModel.findOne({ email }).lean()
+      if (holderShop) {
         return {
           code: 'xxxx',
-          message: 'Shop already release'
+          message: 'Shop already registered!'
         }
       }
 
@@ -25,6 +25,7 @@ class AccessService {
         // created privateKey, publicKey
         const { } = crypto.generateKeyPairSync('rsa', {
           modulusLength: 400
+          
         })
       }
 

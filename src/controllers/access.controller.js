@@ -1,5 +1,5 @@
 const logger = require('../configs/logging')(module.filename)
-const shopService = require('../services/access/access.service')
+const shopService = require('../services/access.service')
 
 class AccessController {
   signUp = async (req, res, next) => {
