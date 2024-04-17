@@ -1,17 +1,18 @@
 const keyTokenModal = require('../models/keyToken.model')
+const logger = require('../configs/logging')
 
 class KeyTokenService {
   
   static createToken = async ({ userId, publicKey }) => {
     try {
-      const publicKeyString = publicKey.toString()
       const tokens = await keyTokenModal.create({
         user: userId,
-        publicKey: publicKeyString
+        publicKey
       })
 
-      return tokens ? PublicKeyCredential : null
+      return tokens ? tokens.publicKey : null
     } catch (error) {
+      // logger.error('Error create tokens records', error)
       return error
     }
   } 

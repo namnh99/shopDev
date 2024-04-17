@@ -1,5 +1,6 @@
 // third party
-const app = require('express')();
+const express = require('express')
+const app = express();
 const morgan = require('morgan')
 const helmet = require('helmet');
 const compression = require('compression')
@@ -31,7 +32,11 @@ if (process.env.APP_ENV === 'develop') {
 
 app.use(compression())
 app.use(helmet())   // protect api, info server
-app.use(bodyParser.json())
+app.use(express.json())
+app.use(express.urlencoded({
+  extended: false
+}))
+
 
 // init db
 require('./dbs/index')

@@ -1,7 +1,7 @@
 const { Schema, model } = require('mongoose')
 
-const DOCUMENT_NAME =  'Shop'
-const COLECTION_NAME = 'Shop'
+const DOCUMENT_NAME =  'shop'
+const COLECTION_NAME = 'shop'
 
 const ShopSchema = new Schema({
   name: {
@@ -32,8 +32,8 @@ const ShopSchema = new Schema({
     default: []
   }
 }, {
-  timestamps: true,
-  collation: COLECTION_NAME
+  collection: COLECTION_NAME,
+  timestamps: true
 })
 
-module.exports = model('shop', ShopSchema)
+module.exports = model(DOCUMENT_NAME, ShopSchema)

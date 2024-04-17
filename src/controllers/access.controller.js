@@ -1,18 +1,16 @@
 const logger = require('../configs/logging')(module.filename)
-const shopService = require('../services/access.service')
+const ShopService = require('../services/access.service')
 
 class AccessController {
   signUp = async (req, res, next) => {
     try {
-      logger.info(`[P]::signup::`, req.body)
+      console.log(`[P]::signup::`, req.body)
       /*
         200: OK
         201: Created
       */
-      return res.status(200).json({
-        code: '20001',
-        metadata: { userId: 1 }
-      })
+      const result = await ShopService.signUp(req.body)
+      return res.status(200).json(result)
     } catch (error) {
       logger.error(error)
     }
