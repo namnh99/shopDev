@@ -1,16 +1,17 @@
-const shopModel = require('../models/shop.model')
+const ShopModel = require('../models/shop.model')
 const bcrypt = require('bcrypt')
 const crypto = require('crypto')
 const { ROLE_SHOP } = require('../common/constant')
 const KeyTokenService = require('./keyToken.service')
 const { createTokenPair } = require('../auth/authUtils')
+const { getFileds } = require('../utils/builResponse')
 
 class AccessService {
   static signUp = async ({ name, email, password }) => {
     debugger
     try {
       // step 1: check email exist
-      const holderShop = await shopModel.findOne({ email }).lean()
+      const holderShop = await ShopModel.findOne({ email }).lean()
       if (holderShop) {
         return {
           code: 'xxxx',
@@ -20,46 +21,51 @@ class AccessService {
 
       const passwordHash = await bcrypt.hash(password, 10)
 
-      const newShop = await shopModel.create({
+      const newShop = await ShopModel.create({
         name, email, password: passwordHash, roles: [ROLE_SHOP.SHOP]
       })
 
       if (newShop) {
         // created privateKey, publicKey
-        const { privateKey, publicKey } = crypto.generateKeyPairSync('rsa', {
-          modulusLength: 4096,
-          publicKeyEncoding: {
-            type: 'spki',
-            format: 'pem'
-          },
-          privateKeyEncoding: {
-            type: 'pkcs8',
-            format: 'pem'
-          }
-        })
+
+        // // use RSA-ma hoa bat doi xung
+        // const { privateKey, publicKey } = crypto.generateKeyPairSync('rsa', {
+        //   modulusLength: 4096,
+        //   publicKeyEncoding: {
+        //     type: 'spki',
+        //     format: 'pem'
+        //   },
+        //   privateKeyEncoding: {
+        //     type: 'pkcs8',
+        //     format: 'pem'
+        //   }
+        // })
+
+        // ma hoa doi xung
+        const privateKey = crypto.randomBytes(64).toString('hex')
+        const publicKey = crypto.randomBytes(64).toString('hex')
 
         const userId = newShop._id
-
-        const publicKeyString = await KeyTokenService.createToken({
+        const keyStore = await KeyTokenService.createToken({
           userId,
-          publicKey
+          publicKey,
+          privateKey
         })
 
-        if (!publicKeyString) {
+        if (!keyStore) {
           return {
             code: 'xxxx',
-            message: 'publicKeyString error',
+            message: 'keyStore error',
           }
         }
 
-        const publicKeyObject = crypto.createPublicKey(publicKeyString)
         const tokens = await createTokenPair({ userId, email }, publicKey, privateKey)
         console.log('Create Token Success', tokens)
 
         return {
           code: 203,
           metadata: {
-            shop: newShop,
+            shop: getFileds({ fileds: ['_id', 'name', 'email'], object: newShop }),
             tokens
           }
         }

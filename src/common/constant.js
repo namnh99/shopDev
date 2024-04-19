@@ -15,8 +15,14 @@ const ROLE_SHOP = {
 
 const POOL_SIZE = 50
 
+const HEADER = {
+  API_KEY: 'x-api-key',
+  AUTHORIZATION: 'authorization'
+}
+
 module.exports = {
   RESPONSE,
   POOL_SIZE,
-  ROLE_SHOP
+  ROLE_SHOP,
+  HEADER
 }

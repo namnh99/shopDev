@@ -3,11 +3,12 @@ const logger = require('../configs/logging')
 
 class KeyTokenService {
   
-  static createToken = async ({ userId, publicKey }) => {
+  static createToken = async ({ userId, publicKey, privateKey }) => {
     try {
       const tokens = await keyTokenModal.create({
         user: userId,
-        publicKey
+        publicKey,
+        privateKey
       })
 
       return tokens ? tokens.publicKey : null

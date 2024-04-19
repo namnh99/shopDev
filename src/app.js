@@ -4,13 +4,11 @@ const app = express();
 const morgan = require('morgan')
 const helmet = require('helmet');
 const compression = require('compression')
-const bodyParser  = require('body-parser')
 
 // middlewares
 const { endpointNotFound, errorHandle } = require('./middlewares/errorHandle')
 
 // routers
-const userRoute = require('./routers/user.route')
 const shopRoute = require('./routers')
 
 // logger
