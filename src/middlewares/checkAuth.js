@@ -1,9 +1,12 @@
-const { HEADER } = require('../common/constant')
+// Services
 const apiKeyService = require('../services/apiKey.service')
+// Constants
+const { HEADER } = require('../common/constant')
+
 
 const apiKey = async (req, res, next) => {
   try {
-    const key = req.headers['x-api-key']?.toString()
+    const key = req.headers[HEADER.API_KEY]?.toString()
     if (!key) {
       return res.status(403).json({
         message: 'Forbidden Error'
@@ -18,7 +21,7 @@ const apiKey = async (req, res, next) => {
     }
 
     req.objKey = objKey
-    next()
+    return next()
 
   } catch (error) {
     console.log(error)
@@ -34,7 +37,9 @@ const permission = ( permission ) => {
       })
     }
 
-    if (req.objKey.permissions.includes(permission)) next()
+    if (req.objKey.permissions.includes(permission)) {
+      return next()
+    }
   }
 }
 

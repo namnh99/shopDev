@@ -1,4 +1,6 @@
-const keyTokenModal = require('../models/keyToken.model')
+// Models
+const KeyTokenModal = require('../models/keyToken.model')
+// Logger
 const logger = require('../configs/logging')
 
 class KeyTokenService {

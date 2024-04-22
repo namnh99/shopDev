@@ -1,5 +1,7 @@
-const { RESPONSE } = require('../common/constant')
+// Logger
 const logger = require('../configs/logging')(module.filename)
+// Constants
+const { RESPONSE } = require('../common/constant')
 
 const endpointNotFound = (req, res, next) => {
   const error = {

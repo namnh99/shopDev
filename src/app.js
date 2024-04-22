@@ -29,15 +29,18 @@ if (process.env.APP_ENV === 'develop') {
 }
 
 app.use(compression())
-app.use(helmet())   // protect api, info server
+// protect api, info server
+app.use(helmet())
+// body-parser except html post form
 app.use(express.json())
+// body-parser for html post form
 app.use(express.urlencoded({
   extended: false
 }))
 
-
 // init db
 require('./dbs/index')
+
 // init routers
 app.use('/health', (req, res) => {
   res.status(200).send({ message: 'OK' })

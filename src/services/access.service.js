@@ -1,10 +1,14 @@
-const ShopModel = require('../models/shop.model')
 const bcrypt = require('bcrypt')
 const crypto = require('crypto')
-const { ROLE_SHOP } = require('../common/constant')
+// Models
+const ShopModel = require('../models/shop.model')
+// Servives
 const KeyTokenService = require('./keyToken.service')
-const { createTokenPair } = require('../auth/authUtils')
+// Ultis
 const { getFileds } = require('../utils/builResponse')
+const { createTokenPair } = require('../auth/authUtils')
+// Contants
+const { ROLE_SHOP } = require('../common/constant')
 
 class AccessService {
   static signUp = async ({ name, email, password }) => {
