@@ -2,7 +2,7 @@ const bcrypt = require('bcrypt')
 const crypto = require('crypto')
 // Models
 const ShopModel = require('../models/shop.model')
-// Servives
+// Services
 const KeyTokenService = require('./keyToken.service')
 // Ultis
 const { getFileds } = require('../utils/builResponse')
@@ -12,7 +12,6 @@ const { ROLE_SHOP } = require('../common/constant')
 
 class AccessService {
   static signUp = async ({ name, email, password }) => {
-    debugger
     try {
       // step 1: check email exist
       const holderShop = await ShopModel.findOne({ email }).lean()
@@ -45,7 +44,7 @@ class AccessService {
         //   }
         // })
 
-        // ma hoa doi xung
+        // Symmetric encryption - ma hoa doi xung
         const privateKey = crypto.randomBytes(64).toString('hex')
         const publicKey = crypto.randomBytes(64).toString('hex')
 
@@ -74,7 +73,7 @@ class AccessService {
           }
         }
       }
-
+      
       return {
         code: 200,
         metadata: null

@@ -7,12 +7,13 @@ const { db: { host, port, name } } = require('../configs/global')
 
 const MONGODB_ENDPOINT = `mongodb://${host}:${port}/${name}`
 
+// Straterty pattern
+// Create object combine all databaes can used.
 const config = {
   mongodb: {
     connect: () => {
       if (process.env.APP_ENV === 'develop') {
         mongoose.set('debug', true)
-        mongoose.set('debug', { color: true })
       }
 
       mongoose.connect(MONGODB_ENDPOINT, { maxPoolSize: POOL_SIZE })

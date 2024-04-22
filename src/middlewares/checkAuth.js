@@ -12,7 +12,7 @@ const apiKey = async (req, res, next) => {
         message: 'Forbidden Error'
       })
     }
-    console.log(':::key', key)
+    console.log('key:::', key)
     const objKey = await apiKeyService.findById(key)
     if (!objKey) {
       return res.status(403).json({
@@ -25,21 +25,23 @@ const apiKey = async (req, res, next) => {
 
   } catch (error) {
     console.log(error)
+    next(err)
   }
 }
 
-const permission = ( permission ) => {
+const permission = (permission) => {
   return async (req, res, next) => {
-    console.log('permission::', req.objKey.permissions)
     if (!req.objKey.permissions) {
       return res.status(403).json({
         message: 'Permission denied'
       })
     }
 
-    if (req.objKey.permissions.includes(permission)) {
-      return next()
-    }
+    if (!req.objKey.permissions.includes(permission)) {
+      return res.status(403).json({
+        message: 'Permission denied'
+      })
+    } else return next()
   }
 }
 

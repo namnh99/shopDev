@@ -1,6 +1,6 @@
 // Logger
 const logger = require('../configs/logging')(module.filename)
-// Servies
+// Services
 const ShopService = require('../services/access.service')
 
 class AccessController {
@@ -15,6 +15,7 @@ class AccessController {
       return res.status(200).json(result)
     } catch (error) {
       logger.error(error)
+      next(error)
     }
   }
 }

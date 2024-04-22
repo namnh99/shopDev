@@ -3,7 +3,7 @@ const route = express.Router()
 // Controllers
 const accessController = require('../../controllers/access.controller')
 
-// signUP
+// sign-up
 route.get('/shop/signup', accessController.signUp)
 
 module.exports = route
