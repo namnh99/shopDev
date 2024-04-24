@@ -36,13 +36,13 @@ class AccessService {
 
     const userId = foundShop._id
     const tokens = await createTokenPair({ userId, email }, publicKey, privateKey)
-    
-    await KeyTokenService.createToken({ privateKey, refreshToken: tokens.refreshToken })
+
+    await KeyTokenService.createToken({ userId, email, privateKey, refreshToken: tokens.refreshToken })
 
     return {
       shop: getFileds({ fileds: ['_id', 'name', 'email'], object: foundShop }),
       tokens
-    } 
+    }
   }
 
   /*
@@ -52,7 +52,7 @@ class AccessService {
     4- generate tokens by privateKey and publicKey
     5- get data return sign-up
   */
-  static signUp = async ({ name, email, password }) => {    
+  static signUp = async ({ name, email, password }) => {
     const holderShop = await ShopModel.findOne({ email }).lean()
     if (holderShop) {
       throw new BadRequestError('Shop already registered!', 400)
@@ -64,17 +64,13 @@ class AccessService {
       name, email, password: passwordHash, roles: [ROLE_SHOP.SHOP]
     })
 
-    if (newShop) {      
+    if (newShop) {
       // Symmetric encryption - ma hoa doi xung
       const privateKey = crypto.randomBytes(64).toString('hex')
       const publicKey = crypto.randomBytes(64).toString('hex')
 
       const userId = newShop._id
-      const keyStore = await KeyTokenService.createToken({
-        userId,
-        publicKey,
-        privateKey
-      })
+      const keyStore = await KeyTokenService.createToken({ userId, publicKey, privateKey })
 
       if (!keyStore) {
         throw new BadRequestError('keyStore error')
