@@ -1,6 +1,5 @@
 // Logger
 const logger = require('../configs/logging')(module.filename)
-const { error } = require('winston')
 // Constants
 const { RESPONSE } = require('../common/constant')
 
@@ -14,7 +13,7 @@ const endpointNotFound = (req, res, next) => {
 }
 
 const errorHandle = (err, req, res, next) => {
-  logger.error(`Error middleware: ${err.message}`)
+  // logger.error(`Error middleware: ${err.message}`)
   const status = err.status || 500
   const message = err.message || RESPONSE.ERR_SERVER
   const data = err.data || null
@@ -26,11 +25,14 @@ const errorHandle = (err, req, res, next) => {
   })
 } 
 
-const tryCatchWrapper = (func) => (req, res, next) => {
+const tryCatchWrapper = (func) => async (req, res, next) => {
+  // func(req, res, next).catch(next) // use promise
   try {
-    func(req, res)
+    await func(req, res, next)
   } catch (error) {
-    logger.error(`TryCatchWrapper error: ${err}`)
+    console.log('TryCatchWrapper error:::', error)
+    // logger.error(`TryCatchWrapper error: ${error}`)
+    next(error)
   }
 }
 

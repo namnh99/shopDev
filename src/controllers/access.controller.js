@@ -1,22 +1,29 @@
 // Logger
 const logger = require('../configs/logging')(module.filename)
 // Services
-const ShopService = require('../services/access.service')
+const AccessService = require('../services/access.service')
+// Response
+const { Ok, Created, SuccessResponse } = require('../core/sucess.response')
 
 class AccessController {
+  login = async (req, res, next) => {
+    const result = await AccessService.login(req.body)
+    new SuccessResponse({
+      metadata: result
+    }).send(res)
+  }
+
   signUp = async (req, res, next) => {
-    try {
-      console.log(`[P]::signup::`, req.body)
-      /*
-        200: OK
-        201: Created
-      */
-      const result = await ShopService.signUp(req.body)
-      return res.status(200).json(result)
-    } catch (error) {
-      logger.error(error)
-      next(error)
-    }
+    console.log(`[P]::signup::`, req.body)
+    /*
+      200: OK
+      201: Created
+    */
+    const result = await AccessService.signUp(req.body)
+    return new Created({
+      message: 'Registerted OK',
+      metadata: result
+    }).send(res)
   }
 }
 

@@ -3,12 +3,10 @@ const jwt = require('jsonwebtoken')
 const createTokenPair = async (payload, publicKey, privateKey ) => {
   try {
     const assessToken = await jwt.sign(payload, publicKey, {
-      // algorithm: 'RS256', // use for RSA
       expiresIn: '1 days'
     })
 
     const refreshToken = await jwt.sign(payload, privateKey, {
-      // algorithm: 'RS256',
       expiresIn: '7 days'
     })
 

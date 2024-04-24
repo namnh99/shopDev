@@ -20,9 +20,27 @@ const HEADER = {
   AUTHORIZATION: 'authorization'
 }
 
+const STATUS_CODE = {
+  OK: 200,
+  CREATED: 201,
+  UNAUTHORIZED: 401,
+  FORBIDDEN: 403,
+  CONFLICT: 409,
+}
+
+const REASON_STATUS_CODE = {
+  OK: 'Success',
+  CREATED: 'Created',
+  FORBIDDEN: 'Bad request error',
+  CONFLICT: 'Conflict error',
+  UNAUTHORIZED: 'Unauthorized'
+}
+
 module.exports = {
   RESPONSE,
   POOL_SIZE,
   ROLE_SHOP,
-  HEADER
+  HEADER,
+  STATUS_CODE,
+  REASON_STATUS_CODE
 }

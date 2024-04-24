@@ -9,16 +9,16 @@ app.listen(port, () => {
   logger.info(`Server listen on ${port}`)
 })
 
-const signalHandler = () => {
-  logger.info('Received SIGINT. Close server')
+// const signalHandler = () => {
+//   logger.info('Received SIGINT. Close server')
 
-  // notify send close Server
+//   // notify send close Server
 
-  // close db connection
-  config[process.env.DATABASE_MANAGEMENT].close()
-    .then(() => logger.info('Close database'))
-    .catch(err => logger.error(`Lỗi đóng kết nối database: ${err}`))
-    .finally(() => process.exit())
-}
+//   // close db connection
+//   config[process.env.DATABASE_MANAGEMENT].close()
+//     .then(() => logger.info('Close database'))
+//     .catch(err => logger.error(`Lỗi đóng kết nối database: ${err}`))
+//     .finally(() => process.exit())
+// }
 
-process.on('SIGINT', signalHandler)
+// process.on('SIGINT', signalHandler)

@@ -7,8 +7,10 @@ const { db: { host, port, name } } = require('../configs/global')
 
 const MONGODB_ENDPOINT = `mongodb://${host}:${port}/${name}`
 
-// Straterty pattern
-// Create object combine all databaes can used.
+/*
+  Straterty pattern
+  Create object combine all databaes can used.
+*/
 const config = {
   mongodb: {
     connect: () => {

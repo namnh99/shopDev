@@ -1,8 +1,10 @@
 const config = require('./config.db')
 
-// Without nodejs behavior cache files (dont re-call/re-execute file)-only one instance, 
-// Still design with only one instance if re-call/re-execute class
-// Singleton Pattern
+/* 
+  Without nodejs behavior cache files (dont re-call/re-execute file)-only one instance, 
+  Still design with only one instance if re-call/re-execute class
+  Singleton Pattern
+*/
 class Database {
   instance;
 
