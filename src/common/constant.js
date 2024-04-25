@@ -17,7 +17,8 @@ const POOL_SIZE = 50
 
 const HEADER = {
   API_KEY: 'x-api-key',
-  AUTHORIZATION: 'authorization'
+  AUTHORIZATION: 'authorization',
+  CLIENT_ID: 'x-client-id'
 }
 
 const STATUS_CODE = {
@@ -25,6 +26,7 @@ const STATUS_CODE = {
   CREATED: 201,
   UNAUTHORIZED: 401,
   FORBIDDEN: 403,
+  NOT_FOUND: 404,
   CONFLICT: 409,
 }
 
@@ -33,7 +35,8 @@ const REASON_STATUS_CODE = {
   CREATED: 'Created',
   FORBIDDEN: 'Bad request error',
   CONFLICT: 'Conflict error',
-  UNAUTHORIZED: 'Unauthorized'
+  UNAUTHORIZED: 'Unauthorized',
+  NOT_FOUND: 'Not found'
 }
 
 module.exports = {

@@ -1,8 +1,17 @@
 const jwt = require('jsonwebtoken')
+// Services
+const KeyTokenService = require('../services/keyToken.service')
+// Auth Utils
+const { asyncHandler } = require('../helper/asyncHandler')
+// Responses
+const { AuthFailureError, NotFoundError } = require('../core/error.response')
+// Constants
+const { HEADER } = require('../common/constant')
 
-const createTokenPair = async (payload, publicKey, privateKey ) => {
+
+const createTokenPair = async (payload, publicKey, privateKey) => {
   try {
-    const assessToken = await jwt.sign(payload, publicKey, {
+    const accessToken = await jwt.sign(payload, publicKey, {
       expiresIn: '1 days'
     })
 
@@ -11,7 +20,7 @@ const createTokenPair = async (payload, publicKey, privateKey ) => {
     })
 
     // verify
-    jwt.verify(assessToken, publicKey, (err, decode) => {
+    jwt.verify(accessToken, publicKey, (err, decode) => {
       if (err) {
         console.log('error verify::', err)
       } else {
@@ -19,12 +28,42 @@ const createTokenPair = async (payload, publicKey, privateKey ) => {
       }
     })
 
-    return { assessToken, refreshToken }
+    return { accessToken, refreshToken }
   } catch (error) {
     return error
   }
 }
 
+const authentication = asyncHandler(async (req, res, next) => {
+  /*
+    1. Check user header missing?
+    2. get accessToken
+    3. verity token
+    4. check user in dbs
+    5. check KeyStore with this userId
+    6. OK all -> return next()
+  */
+
+  const userId = req.headers[HEADER.CLIENT_ID]
+  if (!userId) throw new AuthFailureError('Invalid request')
+
+  const keyStore = await KeyTokenService.findByUserId(userId)
+  if (!keyStore) throw new NotFoundError('Not found KeyStore')
+
+  const accessToken = req.headers[HEADER.AUTHORIZATION]
+  if (!accessToken) throw new NotFoundError('Invalid request')
+
+  try {
+    const decode = jwt.verify(accessToken, keyStore.publicKey)  
+    if (userId !== decode.userId) throw new AuthFailureError('Invalid UserId')
+    req.keyStore = keyStore
+    return next()
+  } catch (error) {
+    throw error
+  }
+})
+
 module.exports = {
-  createTokenPair
+  createTokenPair,
+  authentication
 }

@@ -15,38 +15,6 @@ const { ROLE_SHOP } = require('../common/constant')
 class AccessService {
   /*
     1- check email in dbs
-    2- match password
-    3- create AT and RT and save
-    4- generate tokens
-    5- get data return login
-  */
-  static login = async ({ email, password, refreshToken = null }) => {
-    const foundShop = await ShopService.findByEmail({ email })
-    if (!foundShop) {
-      throw new BadRequestError('Shop not registered!')
-    }
-
-    const match = await bcrypt.compare(password, foundShop.password)
-    if (!match) {
-      throw new AuthFailureError('Password not correct')
-    }
-
-    const privateKey = crypto.randomBytes(64).toString('hex')
-    const publicKey = crypto.randomBytes(64).toString('hex')
-
-    const userId = foundShop._id
-    const tokens = await createTokenPair({ userId, email }, publicKey, privateKey)
-
-    await KeyTokenService.createToken({ userId, email, privateKey, refreshToken: tokens.refreshToken })
-
-    return {
-      shop: getFileds({ fileds: ['_id', 'name', 'email'], object: foundShop }),
-      tokens
-    }
-  }
-
-  /*
-    1- check email in dbs
     2- create privateKey and publicKey
     3- save keys in dbs
     4- generate tokens by privateKey and publicKey
@@ -73,7 +41,7 @@ class AccessService {
       const keyStore = await KeyTokenService.createToken({ userId, publicKey, privateKey })
 
       if (!keyStore) {
-        throw new BadRequestError('keyStore error')
+        throw new BadRequestError('KeyStore error')
       }
 
       const tokens = await createTokenPair({ userId, email }, publicKey, privateKey)
@@ -86,6 +54,47 @@ class AccessService {
     }
 
     return null
+  }
+
+  /*
+    1- check email in dbs
+    2- match password
+    3- create AT and RT and save
+    4- generate tokens
+    5- get data return login
+  */
+  static login = async ({ email, password, refreshToken = null }) => {
+    const foundShop = await ShopService.findByEmail({ email })
+    if (!foundShop) {
+      throw new BadRequestError('Shop not registered!')
+    }
+
+    const match = await bcrypt.compare(password, foundShop.password)
+    if (!match) {
+      throw new AuthFailureError('Password not correct')
+    }
+
+    const privateKey = crypto.randomBytes(64).toString('hex')
+    const publicKey = crypto.randomBytes(64).toString('hex')
+
+    const userId = foundShop._id
+    const tokens = await createTokenPair({ userId, email }, publicKey, privateKey)
+
+    await KeyTokenService.createToken({ userId, publicKey, privateKey, refreshToken: tokens.refreshToken })
+
+    return {
+      shop: getFileds({ fileds: ['_id', 'name', 'email'], object: foundShop }),
+      tokens
+    }
+  }
+
+  /*
+    1.logout
+  */
+  static logout = async ({ keyStore }) => {
+    const delKey = KeyTokenService.removeById(keyStore._id)
+    console.log(delKey)
+    return delKey
   }
 }
 

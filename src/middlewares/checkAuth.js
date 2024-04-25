@@ -3,7 +3,6 @@ const apiKeyService = require('../services/apiKey.service')
 // Constants
 const { HEADER } = require('../common/constant')
 
-
 const apiKey = async (req, res, next) => {
   try {
     const key = req.headers[HEADER.API_KEY]?.toString()
@@ -12,7 +11,7 @@ const apiKey = async (req, res, next) => {
         message: 'Forbidden Error'
       })
     }
-    console.log('key:::', key)
+
     const objKey = await apiKeyService.findById(key)
     if (!objKey) {
       return res.status(403).json({

@@ -1,11 +1,11 @@
 // Logger
 const logger = require('../configs/logging')(module.filename)
 // Constants
-const { RESPONSE } = require('../common/constant')
+const { RESPONSE, STATUS_CODE } = require('../common/constant')
 
 const endpointNotFound = (req, res, next) => {
   const error = {
-    status: 404,
+    status: STATUS_CODE.NOT_FOUND,
     message: RESPONSE.ERR_ENDPOINT_NOT_FOUND,
     data: req.originalUrl
   }
@@ -25,19 +25,7 @@ const errorHandle = (err, req, res, next) => {
   })
 } 
 
-const tryCatchWrapper = (func) => async (req, res, next) => {
-  // func(req, res, next).catch(next) // use promise
-  try {
-    await func(req, res, next)
-  } catch (error) {
-    console.log('TryCatchWrapper error:::', error)
-    // logger.error(`TryCatchWrapper error: ${error}`)
-    next(error)
-  }
-}
-
 module.exports = {
   endpointNotFound,
   errorHandle,
-  tryCatchWrapper
 }
