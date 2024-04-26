@@ -28,7 +28,25 @@ class KeyTokenService {
   }
 
   static removeById = async (id) => {
-    return await KeyTokenModal.deleteOne({ id })
+    return await KeyTokenModal.deleteOne({ _id: id })
+  }
+
+  static findByRefreshTokenUsed = async (refreshToken) => {
+    return await KeyTokenModal.findOne({ findByRefreshTokenUsed: refreshToken }).lean()
+  }
+
+  static removeByUserId = async (userId) => {
+    return await KeyTokenModal.findByIdAndDelete({ user: new Types.ObjectId(userId) })
+  }
+
+  static findByRefreshToken = async (refreshToken) => {
+    return await KeyTokenModal.findOne({ refreshToken }).lean()
+  }
+
+  static updateRefreshTokenUsed = async (userId, refreshToken) => {
+    const query = { user: new Types.ObjectId(userId)}
+    const update = { $push: { 'refreshTokensUsed': refreshToken } }
+    return await KeyTokenModal.updateOne(query, update)
   }
 }
 

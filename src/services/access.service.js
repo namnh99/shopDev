@@ -7,8 +7,8 @@ const KeyTokenService = require('./keyToken.service')
 const ShopService = require('./shop.service')
 // Ultis
 const { getFileds } = require('../utils/builResponse')
-const { createTokenPair } = require('../auth/authUtils')
-const { ConflictError, BadRequestError, AuthFailureError } = require('../core/error.response')
+const { createTokenPair, verifyJwtToken } = require('../auth/authUtils')
+const { ConflictError, BadRequestError, AuthFailureError, ForbiddenError } = require('../core/error.response')
 // Contants
 const { ROLE_SHOP } = require('../common/constant')
 
@@ -92,9 +92,42 @@ class AccessService {
     1.logout
   */
   static logout = async ({ keyStore }) => {
-    const delKey = KeyTokenService.removeById(keyStore._id)
-    console.log(delKey)
-    return delKey
+    const result = await KeyTokenService.removeById(keyStore._id)
+    console.log('result:::', result)
+    return result
+  }
+
+  /*
+    1. check tokeUsed?
+    2. if used, clear all data KeyStore
+    3. if not, verify token
+    4. verify user
+  */
+  static handleRefreshToken = async (refreshToken) => {
+    const foundToken = KeyTokenService.findByRefreshTokenUsed(refreshToken)
+    if (foundToken) {
+      // decode what user uses belong to this token
+      const { userId, email } = verifyJwtToken(refreshToken, foundToken.privateKey)
+      console.log('Warning user:::', { userId, email })
+      await KeyTokenService.removeByUserId(userId)
+      throw new ForbiddenError('Something went wrong! Please relogin')
+    }
+
+    const holderToken = await KeyTokenService.findByRefreshToken(refreshToken)
+    if (!holderToken) throw new AuthFailureError('Shop not registered')
+    //verify
+    const { userId, email } = verifyJwtToken(refreshToken, holderToken.privateKey)
+    console.log('verify user:::', { userId, email })
+
+    const foundShop = ShopService.findByEmail({ email })
+    if (!foundShop) throw new AuthFailureError('Shop not registered')
+    
+    // create new tokens
+    const tokens = createTokenPair({ userId, email }, holderToken.publicKey, holderToken.privateKey)
+    // update refreshTokenUsed
+    await KeyTokenService.updateRefreshTokenUsed(userId, refreshToken)
+
+    return tokens
   }
 }
 
