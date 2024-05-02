@@ -104,17 +104,17 @@ class AccessService {
     4. verify user
   */
   static handleRefreshToken = async (refreshToken) => {
-    const foundToken = KeyTokenService.findByRefreshTokenUsed(refreshToken)
-    if (foundToken) {
+    const foundTokenUsed = await KeyTokenService.findByRefreshTokenUsed(refreshToken)
+    if (foundTokenUsed) {
       // decode what user uses belong to this token
-      const { userId, email } = verifyJwtToken(refreshToken, foundToken.privateKey)
+      const { userId, email } = verifyJwtToken(refreshToken, foundTokenUsed.privateKey)
       console.log('Warning user:::', { userId, email })
       await KeyTokenService.removeByUserId(userId)
       throw new ForbiddenError('Something went wrong! Please relogin')
     }
 
     const holderToken = await KeyTokenService.findByRefreshToken(refreshToken)
-    if (!holderToken) throw new AuthFailureError('Shop not registered')
+    if (!holderToken) throw new AuthFailureError('Shop not registered - invalid refreshToken')
     //verify
     const { userId, email } = verifyJwtToken(refreshToken, holderToken.privateKey)
     console.log('verify user:::', { userId, email })
@@ -123,9 +123,9 @@ class AccessService {
     if (!foundShop) throw new AuthFailureError('Shop not registered')
     
     // create new tokens
-    const tokens = createTokenPair({ userId, email }, holderToken.publicKey, holderToken.privateKey)
+    const tokens = await createTokenPair({ userId, email }, holderToken.publicKey, holderToken.privateKey)
     // update refreshTokenUsed
-    await KeyTokenService.updateRefreshTokenUsed(userId, refreshToken)
+    await KeyTokenService.updateRefreshTokenUsed(userId, refreshToken, tokens.refreshToken)
 
     return tokens
   }

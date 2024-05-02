@@ -32,20 +32,23 @@ class KeyTokenService {
   }
 
   static findByRefreshTokenUsed = async (refreshToken) => {
-    return await KeyTokenModal.findOne({ findByRefreshTokenUsed: refreshToken }).lean()
+    return await KeyTokenModal.findOne({ refreshTokensUsed: refreshToken }).lean()
   }
 
   static removeByUserId = async (userId) => {
-    return await KeyTokenModal.findByIdAndDelete({ user: new Types.ObjectId(userId) })
+    return await KeyTokenModal.findOneAndDelete({ user: new Types.ObjectId(userId) })
   }
 
   static findByRefreshToken = async (refreshToken) => {
     return await KeyTokenModal.findOne({ refreshToken }).lean()
   }
 
-  static updateRefreshTokenUsed = async (userId, refreshToken) => {
+  static updateRefreshTokenUsed = async (userId, oldRefreshToken, newRefreshToken) => {
+    console.log('log:', oldRefreshToken)
+    console.log('log:', newRefreshToken)
+
     const query = { user: new Types.ObjectId(userId)}
-    const update = { $push: { 'refreshTokensUsed': refreshToken } }
+    const update = { $push: { refreshTokensUsed: oldRefreshToken }, $set: { refreshToken: newRefreshToken } }
     return await KeyTokenModal.updateOne(query, update)
   }
 }
