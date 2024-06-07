@@ -17,13 +17,13 @@ class SuccessResponse {
   }
 }
 
-class Ok extends SuccessResponse {
+class OkResponse extends SuccessResponse {
   constructor({ message, metadata }) {
     super({ message, metadata })
   }
 }
 
-class Created extends SuccessResponse {
+class CreatedResponse extends SuccessResponse {
   constructor({
     message,
     statusCode = STATUS_CODE.CREATED,
@@ -36,7 +36,7 @@ class Created extends SuccessResponse {
 }
 
 module.exports = {
-  Ok,
-  Created,
+  OkResponse,
+  CreatedResponse,
   SuccessResponse
 }

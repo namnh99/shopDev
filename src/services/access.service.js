@@ -102,6 +102,7 @@ class AccessService {
     2. if used, clear all data KeyStore
     3. if not, verify token
     4. verify user
+    5. update RTUsed
   */
   static handleRefreshToken = async (refreshToken) => {
     const foundTokenUsed = await KeyTokenService.findByRefreshTokenUsed(refreshToken)

@@ -3,7 +3,7 @@ const logger = require('../configs/logging')(module.filename)
 // Services
 const AccessService = require('../services/access.service')
 // Response
-const { Ok, Created, SuccessResponse } = require('../core/sucess.response')
+const { OkResponse, CreatedResponse, SuccessResponse } = require('../core/sucess.response')
 
 class AccessController {
   signUp = async (req, res, next) => {
@@ -13,7 +13,7 @@ class AccessController {
       201: Created
     */
     const result = await AccessService.signUp(req.body)
-    return new Created({
+    return new CreatedResponse({
       message: 'Registerted OK',
       metadata: result
     }).send(res)

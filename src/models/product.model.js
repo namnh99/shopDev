@@ -1,9 +1,9 @@
 const { Schema, model } = require('mongoose')
 
-const DOCUMENT_NAME =  'products'
-const COLECTION_NAME = 'products'
+const DOCUMENT_NAME =  'product'
+const COLECTION_NAME = 'product'
 
-const ProductsSchema = new Schema({
+const ProductSchema = new Schema({
   product_name: {
     type: String,
     require: true
@@ -24,7 +24,7 @@ const ProductsSchema = new Schema({
   product_type: {
     type: String,
     require: true,
-    enum: ['Electronics', 'Clothes', 'Furniture']
+    enum: ['Electronic', 'Clothing', 'Furniture']
   },
   product_shop: {
     type: Schema.Types.ObjectId,
@@ -40,27 +40,35 @@ const ProductsSchema = new Schema({
 })
 
 // define product type schema
-const ClothesSchema = new Schema({
+const ClothingSchema = new Schema({
   brand: {
     type: String,
     require: true
   },
   size: String,
-  material: String
+  material: String,
+  product_shop: {
+    type: Schema.Types.ObjectId,
+    ref: 'shop'
+  }
 }, {
-  collection: 'clothes',
+  collection: 'clothing',
   timestamps: true
 })
 
-const ElectronicsSchema = new Schema({
+const ElectronicSchema = new Schema({
   manuFacturer: {
     type: String,
     require: true
   },
   model: String,
-  color: String
+  color: String,
+  product_shop: {
+    type: Schema.Types.ObjectId,
+    ref: 'shop'
+  }
 }, {
-  collection: 'electronics',
+  collection: 'electronic',
   timestamps: true
 })
 
@@ -70,15 +78,19 @@ const FurnitureSchema = new Schema({
     require: true
   },
   color: String,
-  material: String
+  material: String,
+  product_shop: {
+    type: Schema.Types.ObjectId,
+    ref: 'shop'
+  }
 }, {
   collection: 'furniture',
   timestamps: true
 })
 
 module.exports = {
-  ProductsModel: model(DOCUMENT_NAME, ProductsSchema),
-  ClothesModel: model('clothes', ClothesSchema),
-  ElectronicsModel: model('electronics', ElectronicsSchema),
+  ProductModel: model(DOCUMENT_NAME, ProductSchema),
+  ClothingModel: model('clothes', ClothingSchema),
+  ElectronicModel: model('electronics', ElectronicSchema),
   FurnitureModel: model('furniture', FurnitureSchema)
 }
