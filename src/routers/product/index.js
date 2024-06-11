@@ -10,5 +10,7 @@ const { authentication } = require('../../auth/authUtils')
 route.use(authentication)
 // route.post('shop/')
 route.post('', asyncHandler(productController.createProduct))
+// Query
+route.get('/draft/all', asyncHandler(productController.getAllDraftsForShop))
 
 module.exports = route

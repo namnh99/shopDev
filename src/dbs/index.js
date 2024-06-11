@@ -6,7 +6,7 @@ const config = require('./config.db')
   Singleton Pattern
 */
 class Database {
-  instance;
+  static instance
 
   constructor(type) {
     this.connect(type)

@@ -1,7 +1,7 @@
 // Logger
 const logger = require('../configs/logging')(module.filename)
 // Services
-const ProductService = require('../services/product.serviceUpdate')
+const ProductService = require('../services/product.service')
 // Response
 const { OkResponse, CreatedResponse, SuccessResponse } = require('../core/sucess.response')
 
@@ -15,6 +15,23 @@ class ProductController {
       })
     }).send(res)
   }
+
+  // Query
+  /**
+   * @description: get all Draft for shop
+   * @param {Numer} req.limit 
+   * @param {Number} req.skip 
+   * @return {JSON} 
+   */
+  getAllDraftsForShop = async (req, res, next) => {
+    new SuccessResponse({
+      message: 'Get list success',
+      metadata: await ProductService.findAllDraftsForShop({
+        product_shop: req.user.userId
+      })
+    }).send(res)
+  }
+  // End query
 }
 
 module.exports = new ProductController()

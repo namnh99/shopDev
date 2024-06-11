@@ -98,7 +98,8 @@ const logger = (module) => {
   // add log console if running dev/test env
   if (process.env.APP_ENV !== 'production') {
     myLogger.add(new winston.transports.Console({
-      format: createCustomFormat(module, allFilter)
+      handleExceptions: true,
+      format: createCustomFormat(module, errorFilter)
     }))
   }
 
