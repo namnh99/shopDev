@@ -16,7 +16,7 @@ class ProductController {
     }).send(res)
   }
 
-  // Query
+  // Get all product draft //
   /**
    * @description: get all Draft for shop
    * @param {Numer} req.limit 
@@ -25,13 +25,38 @@ class ProductController {
    */
   getAllDraftsForShop = async (req, res, next) => {
     new SuccessResponse({
-      message: 'Get list success',
+      message: 'Get list prodcut draft success',
       metadata: await ProductService.findAllDraftsForShop({
         product_shop: req.user.userId
       })
     }).send(res)
   }
-  // End query
+  // end
+
+  /**
+   * @description: publish product
+   * @param {Number} req.user.userId 
+   * @param {Number} res.params.product_id
+   * @return {JSON}
+   */
+  publishProductByShop = async (req, res, next) => {
+    new SuccessResponse({
+      message: 'Publish product success',
+      metadata: await ProductService.publishProductByShop({
+        product_shop: req.user.userId,
+        product_id: req.params.product_id
+      })
+    }).send(res)
+  }
+
+  getAllPublishedForShop = async (req, res, next) => {
+    new SuccessResponse({
+      message: 'Get list product published success',
+      metadata: await ProductService.findAllPublishedForShop({
+        product_shop: req.user.userId
+      })
+    }).send(res)
+  }
 }
 
 module.exports = new ProductController()

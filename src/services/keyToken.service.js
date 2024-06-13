@@ -44,9 +44,6 @@ class KeyTokenService {
   }
 
   static updateRefreshTokenUsed = async (userId, oldRefreshToken, newRefreshToken) => {
-    console.log('log:', oldRefreshToken)
-    console.log('log:', newRefreshToken)
-
     const query = { user: new Types.ObjectId(userId)}
     const update = { $push: { refreshTokensUsed: oldRefreshToken }, $set: { refreshToken: newRefreshToken } }
     return await KeyTokenModal.updateOne(query, update)

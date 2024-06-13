@@ -66,7 +66,7 @@ const ProductSchema = new Schema({
 })
 
 // Document middleware: runs before .save() and .create()
-ProductSchema.pre('save', function(next) {
+ProductSchema.pre('save', function (next) {
   this.product_slug = slugify(this.product_name, { lower: true })
   next()
 })

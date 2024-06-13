@@ -2,12 +2,13 @@
 const { ProductModel, ClothingModel, ElectronicModel, FurnitureModel } = require('../models/product.model')
 // Response
 const { BadRequestError, ForbiddenError } = require('../core/error.response')
-// Repo
-const { findAllDraftsForShop } = require('./repositories/product.repo')
+// Repo to Query
+const { findAllDraftsForShop, publishProductByShop, findAllPublishedForShop } = require('./repositories/product.repo')
+const { Types } = require('mongoose')
 
 // define Factory class to create product - Factory pattern
 class ProductFactory {
-  static productRegistry = {} 
+  static productRegistry = {}
 
   static registerProductType(type, classRef) {
     // Straterty pattern
@@ -19,15 +20,18 @@ class ProductFactory {
     return new productClass(payload).createProduct()
   }
 
-  // QUERY
   static async findAllDraftsForShop({ product_shop, limit = 50, skip = 0 }) {
-    const query = { product_shop, isDraf: true }
+    const query = { product_shop, isDraft: true }
     return await findAllDraftsForShop({ query, limit, skip })
   }
 
-  // PUT
   static async publishProductByShop({ product_shop, product_id }) {
-    // const shop = await 
+    return await publishProductByShop({ product_shop, product_id })
+  }
+
+  static async findAllPublishedForShop({ product_shop, limit = 10, skip = 0 }) {
+    const query = { product_shop, isDraft: false, isPublished: true }
+    return await findAllPublishedForShop({ query, limit, skip })
   }
 }
 
