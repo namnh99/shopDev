@@ -11,6 +11,8 @@ route.use(authentication)
 
 route.post('', asyncHandler(productController.createProduct))
 route.get('/draft/all', asyncHandler(productController.getAllDraftsForShop))
+route.get('/published/all', asyncHandler(productController.getAllPublishedForShop))
 route.patch('/publish/:product_id', asyncHandler(productController.publishProductByShop))
+route.patch('/unpublish/:product_id', asyncHandler(productController.unPublishProductByShop))
 
 module.exports = route
