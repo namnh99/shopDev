@@ -1,8 +1,10 @@
 const { Types } = require('mongoose')
 // Models
-const KeyTokenModal = require('../models/keyToken.model')
+const KeyTokenModel = require('../models/keyToken.model')
 // Logger
 // const logger = require('../configs/logging')
+// Utils
+const { ObjectId } = require('../utils/db')
 
 class KeyTokenService {
 
@@ -14,7 +16,7 @@ class KeyTokenService {
         },
         options = { upsert: true, new: true }
 
-      const tokens = await KeyTokenModal.findOneAndUpdate(filter, update, options)
+      const tokens = await KeyTokenModel.findOneAndUpdate(filter, update, options)
 
       return tokens ? tokens : null
     } catch (error) {
@@ -24,29 +26,29 @@ class KeyTokenService {
   }
 
   static findByUserId = async (userId) => {
-    return await KeyTokenModal.findOne({ user: new Types.ObjectId(userId) }).lean()
+    return await KeyTokenModel.findOne({ user: ObjectId(userId) }).lean()
   }
 
   static removeById = async (id) => {
-    return await KeyTokenModal.deleteOne({ _id: id })
+    return await KeyTokenModel.deleteOne({ _id: id })
   }
 
   static findByRefreshTokenUsed = async (refreshToken) => {
-    return await KeyTokenModal.findOne({ refreshTokensUsed: refreshToken }).lean()
+    return await KeyTokenModel.findOne({ refreshTokensUsed: refreshToken }).lean()
   }
 
   static removeByUserId = async (userId) => {
-    return await KeyTokenModal.findOneAndDelete({ user: new Types.ObjectId(userId) })
+    return await KeyTokenModel.findOneAndDelete({ user: ObjectId(userId) })
   }
 
   static findByRefreshToken = async (refreshToken) => {
-    return await KeyTokenModal.findOne({ refreshToken }).lean()
+    return await KeyTokenModel.findOne({ refreshToken }).lean()
   }
 
   static updateRefreshTokenUsed = async (userId, oldRefreshToken, newRefreshToken) => {
-    const query = { user: new Types.ObjectId(userId)}
+    const query = { user: ObjectId(userId)}
     const update = { $push: { refreshTokensUsed: oldRefreshToken }, $set: { refreshToken: newRefreshToken } }
-    return await KeyTokenModal.updateOne(query, update)
+    return await KeyTokenModel.updateOne(query, update)
   }
 }
 
