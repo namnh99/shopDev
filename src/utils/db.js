@@ -1,9 +1,9 @@
 const { Types } = require('mongoose')
 
-const typeObjectId = (id) => {
+const ObjectId = (id) => {
   return new Types.ObjectId(id)
 }
 
 module.exports = {
-  typeObjectId
+  ObjectId
 }

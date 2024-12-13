@@ -58,7 +58,7 @@ class AccessService {
 
   /*
     1- check email in dbs
-    2- match password
+    2- check match password
     3- create AT and RT and save
     4- generate tokens
     5- get data return login

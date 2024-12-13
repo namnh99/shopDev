@@ -39,7 +39,7 @@ const authentication = asyncHandler(async (req, res, next) => {
   /*
     1. Check user header missing?
     2. get accessToken
-    3. verity token
+    3. verify token
     4. check user in dbs
     5. check KeyStore with this userId
     6. OK all -> return next()
