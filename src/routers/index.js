@@ -1,7 +1,7 @@
 const express = require('express')
 const route = express.Router()
 // Middlewares
-const { apiKey, permission } = require('../middlewares/checkAuthApi')
+const { apiKey, permission } = require('../auth/checkAuth')
 
 // check apiKey
 route.use(apiKey)

@@ -1,11 +1,6 @@
 const { Types } = require('mongoose')
 // Models
-const {
-  ProductModel,
-  ElectronicModel,
-  ClothingModel,
-  FurnitureModel
-} = require('../../models/product.model')
+const { ProductModel, ElectronicModel, ClothingModel, FurnitureModel } = require('../product.model')
 // Response
 const { NotFoundError } = require('../../core/error.response')
 // Utils
@@ -40,7 +35,7 @@ const handlePublishProduct = async (product_shop, product_id, update) => {
   if (!isExisted) return null
 
   const query = { _id: typeObjectId(product_id) }
-  const { modifiedCount } = await ProductModel.updateOne(query, { set$: update })
+  const { modifiedCount } = await ProductModel.updateOne(query, { $set: update })
   return modifiedCount
 }
 
@@ -50,13 +45,29 @@ const publishProductByShop = async ({ product_shop, product_id }) => {
 }
 
 const unPublishProductByShop = async ({ product_shop, product_id }) => {
-  const update = { isDraft: true, isPublishzd: false }
+  const update = { isDraft: true, isPublished: false }
   return await handlePublishProduct(product_shop, product_id, update)
+}
+
+const searchProductPublished = async ({ keySearch }) => {
+  const regexSearch = new RegExp(keySearch)
+  const results = await ProductModel.find(
+    {
+      $text: { $search: regexSearch },
+      isPublished: true
+    },
+    { score: { $meta: 'textScore' } }
+  )
+    .sort({ score: { $meta: 'textScore' } })
+    .lean()
+
+  return results
 }
 
 module.exports = {
   findAllDraftsForShop,
   publishProductByShop,
   findAllPublishedForShop,
-  unPublishProductByShop
+  unPublishProductByShop,
+  searchProductPublished
 }

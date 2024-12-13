@@ -34,6 +34,7 @@ const createTokenPair = async (payload, publicKey, privateKey) => {
   }
 }
 
+// midlewares
 const authentication = asyncHandler(async (req, res, next) => {
   /*
     1. Check user header missing?

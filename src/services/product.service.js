@@ -12,8 +12,9 @@ const {
   findAllDraftsForShop,
   publishProductByShop,
   findAllPublishedForShop,
-  unPublishProductByShop
-} = require('./repositories/product.repo')
+  unPublishProductByShop,
+  searchProductPublished
+} = require('../models/repositories/product.repo')
 const { Types } = require('mongoose')
 
 // define Factory class to create product - Factory pattern
@@ -27,6 +28,7 @@ class ProductFactory {
 
   static async createProduct(type, payload) {
     const productClass = ProductFactory.productRegistry[type]
+    if (!productClass) throw new BadRequestError('Product type not found')
     return new productClass(payload).createProduct()
   }
 
@@ -48,8 +50,8 @@ class ProductFactory {
     return await unPublishProductByShop({ product_shop, product_id })
   }
 
-  static async searchProductByPublish() {
-
+  static async searchProductPublished({ keySearch }) {
+    return await searchProductPublished({ keySearch })
   }
 }
 

@@ -19,9 +19,9 @@ class ProductController {
   // Get all product draft //
   /**
    * @description: get all Draft for shop
-   * @param {Numer} req.limit 
-   * @param {Number} req.skip 
-   * @return {JSON} 
+   * @param {Numer} req.limit
+   * @param {Number} req.skip
+   * @return {JSON}
    */
   getAllDraftsForShop = async (req, res, next) => {
     new SuccessResponse({
@@ -35,7 +35,7 @@ class ProductController {
 
   /**
    * @description: publish product
-   * @param {Number} req.user.userId 
+   * @param {Number} req.user.userId
    * @param {Number} res.params.product_id
    * @return {JSON}
    */
@@ -65,6 +65,13 @@ class ProductController {
         product_shop: req.user.userId,
         product_id: req.params.product_id
       })
+    }).send(res)
+  }
+
+  searchProductPublished = async (req, res, next) => {
+    new SuccessResponse({
+      message: 'Get list search products published success',
+      metadata: await ProductService.searchProductPublished({ keySearch: req.params.keySearch })
     }).send(res)
   }
 }
