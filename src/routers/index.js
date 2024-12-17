@@ -3,6 +3,10 @@ const route = express.Router()
 // Middlewares
 const { apiKey, permission } = require('../auth/checkAuth')
 
+route.use('/health', (req, res) => {
+  res.status(200).send({ message: 'OK' })
+})
+
 // check apiKey
 route.use(apiKey)
 

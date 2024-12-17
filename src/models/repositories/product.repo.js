@@ -64,10 +64,21 @@ const searchProductPublished = async ({ keySearch }) => {
   return results
 }
 
+const findAllProducts = async ({ limit, page }) => {
+  return await ProductModel.find()
+    .populate('product_shop', 'name email -_id')
+    .sort({ updateAt: -1 })
+    .skip((page - 1) & limit)
+    .limit(limit)
+    .lean()
+    .exec()
+}
+
 module.exports = {
   findAllDraftsForShop,
   publishProductByShop,
   findAllPublishedForShop,
   unPublishProductByShop,
-  searchProductPublished
+  searchProductPublished,
+  findAllProducts
 }

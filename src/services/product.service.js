@@ -13,7 +13,8 @@ const {
   publishProductByShop,
   findAllPublishedForShop,
   unPublishProductByShop,
-  searchProductPublished
+  searchProductPublished,
+  findAllProducts
 } = require('../models/repositories/product.repo')
 const { Types } = require('mongoose')
 
@@ -37,7 +38,7 @@ class ProductFactory {
     return await findAllDraftsForShop({ query, limit, skip })
   }
 
-  static async findAllPublishedForShop({ product_shop, limit = 10, skip = 0 }) {
+  static async findAllPublishedForShop({ product_shop, limit = 50, skip = 0 }) {
     const query = { product_shop, isDraft: false, isPublished: true }
     return await findAllPublishedForShop({ query, limit, skip })
   }
@@ -52,6 +53,10 @@ class ProductFactory {
 
   static async searchProductPublished({ keySearch }) {
     return await searchProductPublished({ keySearch })
+  }
+
+  static async findAllProducts({ limit = 50, page = 1 }) {
+    return await findAllProducts({ limit, page })
   }
 }
 

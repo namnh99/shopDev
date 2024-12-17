@@ -4,13 +4,13 @@ const path = require('path')
 const fs = require('fs')
 const { combine, timestamp, json, colorize, label, errors, printf } = winston.format
 
-const allFilter = winston.format(info => info)
+const allFilter = winston.format((info) => info)
 
-const infoFilter = winston.format(info => info.level === 'info' ? info : false)
+const infoFilter = winston.format((info) => (info.level === 'info' ? info : false))
 
-const errorFilter = winston.format(info => info.level === 'error' ? info : false)
+const errorFilter = winston.format((info) => (info.level === 'error' ? info : false))
 
-const actionFilter = winston.format(info => {
+const actionFilter = winston.format((info) => {
   if (!info.message || typeof info.message !== 'string') return false
   return info.message.includes('[Action logs]') ? info : false
 })
@@ -63,7 +63,7 @@ const createTransportItem = (fileName, module, filter) => {
     format: createCustomFormat(module, filter),
     // auditFile: `${fileName}-audit.json`,
     maxSize: '20m',
-    maxFiles: '1d',
+    maxFiles: '1d'
   })
 }
 
@@ -87,20 +87,17 @@ const logger = (module) => {
   // });
 
   const myLogger = winston.createLogger({
-    transports: [
-      transportsAll,
-      transportsInfo,
-      transportsError,
-      transportsAction,
-    ]
+    transports: [transportsAll, transportsInfo, transportsError, transportsAction]
   })
 
   // add log console if running dev/test env
   if (process.env.APP_ENV !== 'production') {
-    myLogger.add(new winston.transports.Console({
-      handleExceptions: true,
-      format: createCustomFormat(module, errorFilter)
-    }))
+    myLogger.add(
+      new winston.transports.Console({
+        handleExceptions: true,
+        format: createCustomFormat(module, allFilter)
+      })
+    )
   }
 
   myLogger.action = (actionLog) => {
@@ -110,4 +107,4 @@ const logger = (module) => {
   return myLogger
 }
 
-module.exports = logger;
+module.exports = logger

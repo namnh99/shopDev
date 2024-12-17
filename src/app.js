@@ -1,8 +1,8 @@
 // third party
 const express = require('express')
-const app = express();
+const app = express()
 const morgan = require('morgan')
-const helmet = require('helmet');
+const helmet = require('helmet')
 const compression = require('compression')
 
 // middlewares
@@ -22,10 +22,19 @@ if (process.env.APP_ENV === 'develop') {
     }
   }
 
-  app.use(morgan(':method :url :status :res[content-length] - :response-time ms', {   // log request
-    stream: logStream,
-    immediate: false
-  }))
+  app.use(
+    morgan(':method :url :status :res[content-length]', {
+      stream: logStream,
+      immediate: true
+    })
+  )
+
+  app.use(
+    morgan(':method :url :status :res[content-length] - :response-time ms', {
+      stream: logStream,
+      immediate: false
+    })
+  )
 }
 
 app.use(compression())
@@ -34,18 +43,16 @@ app.use(helmet())
 // body-parser except html post form
 app.use(express.json())
 // body-parser for html post form
-app.use(express.urlencoded({
-  extended: false
-}))
+app.use(
+  express.urlencoded({
+    extended: false
+  })
+)
 
 // init db
 require('./dbs/index')
 
 // init routers
-app.use('/health', (req, res) => {
-  res.status(200).send({ message: 'OK' })
-})
-
 // app.use('/user', userRoute)
 app.use('/', shopRoute)
 
