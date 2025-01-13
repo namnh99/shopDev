@@ -13,8 +13,9 @@ const {
   publishProductByShop,
   findAllPublishedForShop,
   unPublishProductByShop,
-  searchProductPublished,
-  findAllProducts
+  searchProduct,
+  findAllProducts,
+  findProduct
 } = require('../models/repositories/product.repo')
 const { Types } = require('mongoose')
 
@@ -51,12 +52,27 @@ class ProductFactory {
     return await unPublishProductByShop({ product_shop, product_id })
   }
 
-  static async searchProductPublished({ keySearch }) {
-    return await searchProductPublished({ keySearch })
+  static async searchProduct({ keySearch }) {
+    return await searchProduct({ keySearch })
   }
 
-  static async findAllProducts({ limit = 50, page = 1 }) {
-    return await findAllProducts({ limit, page })
+  static async findAllProducts({
+    limit = 50,
+    page = 1,
+    sort = 'ctime',
+    filter = { isPublished: true }
+  }) {
+    return await findAllProducts({
+      limit,
+      page,
+      sort,
+      filter,
+      select: ['product_name', 'product_price', 'product_thumb']
+    })
+  }
+
+  static async findProduct({ product_id }) {
+    return await findProduct({ product_id, unSelect: ['__v'] })
   }
 }
 

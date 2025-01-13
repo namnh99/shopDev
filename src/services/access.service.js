@@ -6,7 +6,7 @@ const ShopModel = require('../models/shop.model')
 const KeyTokenService = require('./keyToken.service')
 const ShopService = require('./shop.service')
 // Ultis
-const { getFileds } = require('../utils/builResponse')
+const { getFileds } = require('../utils')
 const { createTokenPair, verifyJwtToken } = require('../auth/authUtils')
 const { ConflictError, BadRequestError, AuthFailureError, ForbiddenError } = require('../core/error.response')
 // Contants
