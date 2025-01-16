@@ -15,7 +15,8 @@ const {
   unPublishProductByShop,
   searchProduct,
   findAllProducts,
-  findProduct
+  findProduct,
+  updateProductById
 } = require('../models/repositories/product.repo')
 const { Types } = require('mongoose')
 
@@ -102,6 +103,11 @@ class Product {
   async createProduct(product_id) {
     return await ProductModel.create({ ...this, _id: product_id })
   }
+
+  // update Product
+  async updateProduct(product_id, payload) {
+    return await updateProductById({ product_id, payload, Model: ProductModel })
+  }
 }
 
 // define sub-class for diffrence product types
@@ -117,6 +123,21 @@ class Clothing extends Product {
     if (!newProduct) throw new BadRequestError('Create new Product error')
 
     return newProduct
+  }
+
+  async updateProduct({ product_id }) {
+    // 1.remove attribute has null and undefined values
+    const objectParams = this
+    // 2.check where to update
+    if (objectParams.product_attributes) {
+      await updateProductById({
+        product_id,
+        payload: objectParams.product_attributes,
+        Model: ClothingModel
+      })
+    }
+
+    const updateProduct = await super.updateProduct(product_id, objectParams)
   }
 }
 
