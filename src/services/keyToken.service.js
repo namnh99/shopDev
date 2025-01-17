@@ -4,15 +4,17 @@ const KeyTokenModel = require('../models/keyToken.model')
 // Logger
 // const logger = require('../configs/logging')
 // Utils
-const { ObjectId } = require('../utils/db')
+const { typeObjectId } = require('../utils/db')
 
 class KeyTokenService {
-
   static createToken = async ({ userId, publicKey, privateKey, refreshToken }) => {
     try {
       const filter = { user: userId },
         update = {
-          publicKey, privateKey, refreshTokensUsed: [], refreshToken
+          publicKey,
+          privateKey,
+          refreshTokensUsed: [],
+          refreshToken
         },
         options = { upsert: true, new: true }
 
@@ -26,7 +28,7 @@ class KeyTokenService {
   }
 
   static findByUserId = async (userId) => {
-    return await KeyTokenModel.findOne({ user: ObjectId(userId) }).lean()
+    return await KeyTokenModel.findOne({ user: typeObjectId(userId) }).lean()
   }
 
   static removeById = async (id) => {
@@ -38,7 +40,7 @@ class KeyTokenService {
   }
 
   static removeByUserId = async (userId) => {
-    return await KeyTokenModel.findOneAndDelete({ user: ObjectId(userId) })
+    return await KeyTokenModel.findOneAndDelete({ user: typeObjectId(userId) })
   }
 
   static findByRefreshToken = async (refreshToken) => {
@@ -46,8 +48,11 @@ class KeyTokenService {
   }
 
   static updateRefreshTokenUsed = async (userId, oldRefreshToken, newRefreshToken) => {
-    const query = { user: ObjectId(userId)}
-    const update = { $push: { refreshTokensUsed: oldRefreshToken }, $set: { refreshToken: newRefreshToken } }
+    const query = { user: typeObjectId(userId) }
+    const update = {
+      $push: { refreshTokensUsed: oldRefreshToken },
+      $set: { refreshToken: newRefreshToken }
+    }
     return await KeyTokenModel.updateOne(query, update)
   }
 }

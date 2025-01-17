@@ -82,8 +82,10 @@ const findProduct = async ({ product_id, unSelect }) => {
   return await ProductModel.findById(product_id).select(getUnSelectData(unSelect)).lean()
 }
 
-const updateProductById = async ({ product_id, payload, Model, isNew = true }) => {
-  return await Model.findByIdAndUpdate(product_id, payload, { new: isNew })
+const updateProductById = async ({ product_id, payload, model, isNew = true }) => {
+  return await model.findByIdAndUpdate(typeObjectId(product_id), payload, {
+    new: isNew
+  })
 }
 
 const queryProduct = async ({ query, limit, page }) => {

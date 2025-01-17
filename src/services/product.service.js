@@ -18,7 +18,7 @@ const {
   findProduct,
   updateProductById
 } = require('../models/repositories/product.repo')
-const { Types } = require('mongoose')
+const { removeNullUndefinedObject, updateNestedObjectParser } = require('../utils')
 
 // define Factory class to create product - Factory pattern
 class ProductFactory {
@@ -33,6 +33,12 @@ class ProductFactory {
     const productClass = ProductFactory.productRegistry[type]
     if (!productClass) throw new BadRequestError('Product type not found')
     return new productClass(payload).createProduct()
+  }
+
+  static async updateProduct(type, product_id, payload) {
+    const productClass = ProductFactory.productRegistry[type]
+    if (!productClass) throw new BadRequestError('Product type not found')
+    return new productClass(payload).updateProduct(product_id)
   }
 
   static async findAllDraftsForShop({ product_shop, limit = 50, skip = 0 }) {
@@ -106,7 +112,11 @@ class Product {
 
   // update Product
   async updateProduct(product_id, payload) {
-    return await updateProductById({ product_id, payload, Model: ProductModel })
+    return await updateProductById({
+      product_id,
+      payload,
+      model: ProductModel
+    })
   }
 }
 
@@ -125,19 +135,28 @@ class Clothing extends Product {
     return newProduct
   }
 
-  async updateProduct({ product_id }) {
+  async updateProduct(product_id) {
     // 1.remove attribute has null and undefined values
-    const objectParams = this
+    const objectParams = removeNullUndefinedObject(this)
     // 2.check where to update
     if (objectParams.product_attributes) {
       await updateProductById({
         product_id,
-        payload: objectParams.product_attributes,
-        Model: ClothingModel
+        payload: updateNestedObjectParser(objectParams.product_attributes),
+        model: ClothingModel
       })
     }
 
-    const updateProduct = await super.updateProduct(product_id, objectParams)
+    console.log('objectParams::', objectParams)
+
+    const updateProduct = await super.updateProduct(
+      product_id,
+      updateNestedObjectParser(objectParams)
+    )
+
+    console.log('objectParams::', objectParams)
+
+    return updateProduct
   }
 }
 
